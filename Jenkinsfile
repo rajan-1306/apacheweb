@@ -2,31 +2,42 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/rajan-1306/apachewebsite'
+                git branch: 'main', url: 'https://github.com/rajan-1306/apacheweb.git'
             }
         }
 
-        stage('Deploy to Apache Server') {
+        stage('Build') {
             steps {
-                script {
-                    // Ensure /var/www/html exists and clear old files
+                sh 'echo "Building the website..."'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'echo "Running tests (if any)..."'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(['apache-server-credentials']) {
                     sh '''
-                    sudo rm -rf /var/www/html/*
-                    sudo cp -r * /var/www/html/
-                    sudo chown -R www-data:www-data /var/www/html/
-                    sudo chmod -R 755 /var/www/html/
+                        ssh user@server-ip "sudo systemctl restart apache2"
+                        rsync -avz --delete ./ user@server-ip:/var/www/html/
                     '''
                 }
             }
         }
+    }
 
-        stage('Restart Apache') {
-            steps {
-                script {
-                    sh 'sudo systemctl restart apache2'
-                }
-            }
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
         }
     }
+}
