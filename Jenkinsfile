@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/rajan-1306/apacheweb.git'
+                git branch: 'main', url: 'https://github.com/rajan-1306/apacheweb'
             }
         }
 
