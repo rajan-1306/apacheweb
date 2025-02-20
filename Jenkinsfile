@@ -36,7 +36,7 @@ pipeline {
             echo 'Deployment Successful! Website is live on Apache.'
         }
         failure {
-            echo 'Deployment Failed! Check the logs for error.'
+            echo 'Deployment Failed! Check the logs for errors.'
         }
     }
 }
